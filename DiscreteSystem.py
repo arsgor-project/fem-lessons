@@ -1,7 +1,6 @@
 # from MATLAB codes for Finite Element Analysis
 # problem1.m
 # A.J.M. Ferreira, N. Fantuzzi 2019
-# new line
 
 import numpy as np 
 import scipy.linalg as LA
