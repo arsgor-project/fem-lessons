@@ -62,7 +62,7 @@ def plot2Dtruss(numberElements_, elementNodes_, xx_, yy_, displacements_):
     for e in range(numberElements_):
         ax.plot(xx_[elementNodes_[e]], yy_[elementNodes_[e]], color = 'black')
     
-    scale = 1e3
+    scale = 1e2
     new_xx_ = xx_ + scale*displacements_[::2]
     new_yy_ = yy_ + scale*displacements_[1::2]
     ax.scatter(new_xx_, new_yy_, label = 'deformed')
@@ -75,10 +75,11 @@ def plot2Dtruss(numberElements_, elementNodes_, xx_, yy_, displacements_):
 
 E = 30e6; A = 2; EA = E*A
 
-numberElements = 3
-numberNodes = 4
-elementNodes = np.array([[0, 1],[0, 2], [0, 3]])
-nodeCoordinates = np.array([ [0,0], [0,120], [120,120], [120,0]])
+elementNodes = np.array([[0, 1],[0, 2], [1, 2], [1,3], [0,3], [2,3], [2,5], [3,4], [3,5], [2,4], [4,5]])
+nodeCoordinates = np.array([ [0,0], [0,3000], [3000,0], [3000,3000], [6000, 0], [6000, 3000]])
+numberElements = len(elementNodes)
+numberNodes = len(nodeCoordinates)
+
 xx = nodeCoordinates[:, 0]
 yy = nodeCoordinates[:, 1]
 
@@ -86,12 +87,14 @@ yy = nodeCoordinates[:, 1]
 GDof = 2*numberNodes 
 displacements = np.zeros(GDof)
 force = np.zeros(GDof)
-force[1] = -1e4
+force[3] = -5e4
+force[7] = -1e5
+force[11] = -5e4
+prescribedDof = np.array([0,1,9])
+
 
 start = time.time()
-
 stiffness = formStiffness2Dtruss(GDof,numberElements, elementNodes,nodeCoordinates, xx, yy, EA)
-prescribedDof = np.array([2,3,4,5,6,7])
 displacements = solve(GDof, prescribedDof, stiffness,force)
 reactions = computeReactions(stiffness, displacements)
 sigma = stresses2Dtruss(numberElements, elementNodes, xx, yy, displacements, E)
